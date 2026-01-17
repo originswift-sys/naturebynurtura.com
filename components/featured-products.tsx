@@ -7,6 +7,7 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Sparkles } from "lucide-react"
+import { whatsappNumber } from "@/lib/constants"
 
 const featuredProducts = [
   {
@@ -40,7 +41,9 @@ export default function FeaturedProducts() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "10%"])
 
   const handleBuyNow = (productName: string) => {
-    window.open("https://www.instagram.com/naturebynurtura?igsh=OWkwMHNvMXphZWV1", "_blank")
+    const message = `Hello! I'm interested in purchasing ${productName}.\n\nPlease provide more information about availability, pricing, and shipping. Thank you!`
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, "_blank")
   }
 
   const containerVariants = {

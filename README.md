@@ -177,8 +177,10 @@ nature/
 │   ├── about/             # About page
 │   ├── contact/           # Contact page
 │   ├── products/          # Products page
-│   ├── layout.tsx         # Root layout
+│   ├── layout.tsx         # Root layout with SEO metadata
 │   ├── page.tsx           # Home page
+│   ├── sitemap.ts         # Dynamic sitemap generation
+│   ├── robots.ts          # Robots.txt generation
 │   └── globals.css        # Global styles
 ├── components/            # React components
 │   ├── ui/               # shadcn/ui components
@@ -191,12 +193,18 @@ nature/
 │   ├── contact-form.tsx
 │   ├── footer.tsx
 │   ├── testimonial.tsx
-│   └── preloader.tsx
+│   ├── preloader.tsx
+│   ├── google-analytics.tsx  # GA4 integration
+│   └── structured-data.tsx   # JSON-LD schema markup
+├── contexts/             # React contexts
+│   └── cart-context.tsx  # Shopping cart state
+├── lib/                  # Utility functions
+│   ├── utils.ts         # Utility functions
+│   └── constants.ts     # Site constants
 ├── public/               # Static assets
 │   ├── logo 7.png       # Brand logo
 │   ├── p1.jpg - p8.jpg  # Hero carousel images
 │   └── products/        # Product images
-├── lib/                 # Utility functions
 ├── package.json         # Dependencies
 └── pnpm-lock.yaml      # Lock file
 ```
@@ -231,14 +239,88 @@ pnpm run build  # Test locally first
 
 ## 🔐 Environment Variables
 
-This project currently doesn't require environment variables. If you add any in the future:
+This project requires the following environment variables for full functionality:
 
-1. Create `.env.local` file
-2. Add variables:
-   ```
-   NEXT_PUBLIC_API_URL=your_api_url
-   ```
-3. Add to Vercel/Netlify dashboard under "Environment Variables"
+1. **Create `.env.local` file** in the root directory
+2. **Add the following variables:**
+
+```bash
+# Site Configuration (required for SEO)
+NEXT_PUBLIC_SITE_URL=https://naturebynurtura.com
+
+# WhatsApp Business Number (required for checkout)
+# Format: Country code + number (e.g., 233XXXXXXXXX for Ghana)
+# Example: 233241234567
+NEXT_PUBLIC_WHATSAPP_NUMBER=233000000000
+
+# Google Analytics 4 (optional but recommended)
+# Get your Measurement ID from: https://analytics.google.com/
+# Format: G-XXXXXXXXXX
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+3. **For production deployment**, add these to your hosting platform:
+   - **Vercel**: Go to Project Settings → Environment Variables
+   - **Netlify**: Go to Site Settings → Build & Deploy → Environment
+   - **Other platforms**: Add in their respective environment variable settings
+
+### Setting Up WhatsApp Number
+
+1. Get your WhatsApp Business number (format: country code + number)
+2. For Ghana: `233XXXXXXXXX` (e.g., `233241234567`)
+3. For Nigeria: `234XXXXXXXXXX` (e.g., `2348123456789`)
+4. Add it to your `.env.local` file as `NEXT_PUBLIC_WHATSAPP_NUMBER`
+5. **Important**: Remove any spaces, dashes, or special characters (only numbers)
+
+### Getting Your Google Analytics ID
+
+1. Go to [Google Analytics](https://analytics.google.com/)
+2. Create a new property or select an existing one
+3. Go to Admin → Data Streams
+4. Click on your web stream
+5. Copy your Measurement ID (starts with `G-`)
+6. Add it to your `.env.local` file as `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+
+## 🔍 SEO Features
+
+This project includes comprehensive SEO optimization:
+
+- ✅ **Meta Tags**: Title, description, keywords for all pages
+- ✅ **Open Graph Tags**: Rich social media previews
+- ✅ **Twitter Cards**: Optimized Twitter sharing
+- ✅ **Structured Data (JSON-LD)**: Organization and website schema
+- ✅ **Sitemap**: Auto-generated XML sitemap (`/sitemap.xml`)
+- ✅ **Robots.txt**: Search engine crawling directives (`/robots.txt`)
+- ✅ **Canonical URLs**: Prevents duplicate content issues
+- ✅ **Semantic HTML**: Proper heading hierarchy and structure
+
+### SEO Best Practices Implemented
+
+1. **Page-Specific Metadata**: Each page has unique, descriptive titles and descriptions
+2. **Structured Data**: Schema.org markup for better search engine understanding
+3. **Mobile-First**: Responsive design with proper viewport settings
+4. **Fast Loading**: Optimized images and code splitting
+5. **Accessibility**: Semantic HTML and ARIA labels where needed
+
+## 📊 Analytics
+
+### Google Analytics 4 (GA4)
+
+The site includes Google Analytics 4 integration for tracking:
+
+- Page views
+- User interactions
+- Conversion tracking
+- Custom events
+
+**Setup:**
+1. Get your GA4 Measurement ID from [Google Analytics](https://analytics.google.com/)
+2. Add it to `.env.local` as `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+3. The analytics will automatically start tracking
+
+### Vercel Analytics
+
+Vercel Analytics is also included for additional performance insights (automatically enabled on Vercel deployments).
 
 ## 📝 License
 

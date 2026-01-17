@@ -1,20 +1,16 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 export default function Hero() {
   const ref = useRef(null)
-  const router = useRouter()
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   })
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1])
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -30,6 +26,17 @@ export default function Hero() {
     "/p8.jpg",
   ]
 
+  const heroTexts = [
+    { main: "Potent. Precise. Pure.", sub: "Wellness is earned, not marketed." },
+    { main: "Nature's Wisdom.", sub: "Ancient herbs, modern purity." },
+    { main: "Rooted in Nature.", sub: "Crafted with intention." },
+    { main: "Balance. Restore. Thrive.", sub: "Your natural wellness journey." },
+    { main: "Pure Herbal Power.", sub: "No fillers. No compromises." },
+    { main: "Traditional. Tested. True.", sub: "Quality you can trust." },
+    { main: "Healing from Within.", sub: "Nature's finest formulations." },
+    { main: "Wellness Redefined.", sub: "Potency meets purity." },
+  ]
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % africanHerbImages.length)
@@ -37,34 +44,6 @@ export default function Hero() {
 
     return () => clearInterval(interval)
   }, [africanHerbImages.length])
-
-  const navigateToProducts = () => {
-    router.push("/products")
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        duration: 1,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  }
 
   return (
     <section ref={ref} className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -100,36 +79,27 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <motion.div
-        style={{ opacity }}
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
-      >
-        <motion.h1
-          variants={itemVariants}
-          className="font-serif text-6xl sm:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance tracking-tight"
-        >
-          Potent. Precise. Pure.
-        </motion.h1>
-
-        <motion.div variants={itemVariants} className="mb-12">
-          <p className="text-2xl sm:text-3xl lg:text-4xl text-white/95 font-light text-balance tracking-wide">
-            Wellness is earned, not marketed.
-          </p>
-        </motion.div>
-
-        <motion.div variants={itemVariants}>
-          <Button
-            size="lg"
-            onClick={navigateToProducts}
-            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold px-12 py-7 text-lg rounded-full shadow-2xl hover:shadow-secondary/50 transition-all duration-500 hover:scale-105"
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImageIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           >
-            Explore Products
-          </Button>
-        </motion.div>
-      </motion.div>
+            <h1 className="font-serif text-6xl sm:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance tracking-tight">
+              {heroTexts[currentImageIndex].main}
+            </h1>
+
+            <div className="mb-12">
+              <p className="text-2xl sm:text-3xl lg:text-4xl text-white/95 font-light text-balance tracking-wide">
+                {heroTexts[currentImageIndex].sub}
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}

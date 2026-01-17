@@ -7,7 +7,10 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Sparkles, Leaf } from "lucide-react"
+import { Sparkles, Leaf, ShoppingCart } from "lucide-react"
+import { useCart } from "@/contexts/cart-context"
+import { whatsappNumber } from "@/lib/constants"
+import { useToast } from "@/components/ui/use-toast"
 import {
   Select,
   SelectContent,
@@ -174,6 +177,8 @@ export default function ProductsGrid() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [selectedSize, setSelectedSize] = useState<string>("")
+  const { addToCart } = useCart()
+  const { toast } = useToast()
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -181,8 +186,39 @@ export default function ProductsGrid() {
   })
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "5%"])
 
-  const handleBuyNow = (productName: string) => {
-    window.open("https://www.instagram.com/naturebynurtura?igsh=OWkwMHNvMXphZWV1", "_blank")
+  const handleAddToCart = (product: Product, size?: string, price?: string) => {
+    if (!size || !price) {
+      // If no size/price selected, open details dialog
+      setSelectedProduct(product)
+      setSelectedSize("")
+      return
+    }
+
+    addToCart({
+      id: product.id.toString(),
+      name: product.name,
+      image: product.image,
+      size: size,
+      price: price,
+    })
+
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} (${size}) has been added to your cart.`,
+    })
+  }
+
+  const handleBuyNow = (product: Product, size?: string, price?: string) => {
+    // If size and price are provided, go directly to WhatsApp
+    if (size && price) {
+      const message = `Hello! I'd like to order:\n\n${product.name}\nSize: ${size}\nPrice: ${price}\n\nPlease confirm availability and shipping details. Thank you!`
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+      window.open(whatsappUrl, "_blank")
+    } else {
+      // Otherwise, open details dialog to select size
+      setSelectedProduct(product)
+      setSelectedSize("")
+    }
   }
 
   const containerVariants = {
@@ -349,7 +385,14 @@ export default function ProductsGrid() {
                         View Details
                       </Button>
                       <Button
-                        onClick={() => handleBuyNow(product.name)}
+                        onClick={() => handleAddToCart(product)}
+                        className="w-full bg-accent hover:bg-accent/90 text-accent-foreground py-6 text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105 flex items-center justify-center gap-2"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                        Add to Cart
+                      </Button>
+                      <Button
+                        onClick={() => handleBuyNow(product)}
                         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105"
                       >
                         Buy Now
@@ -456,12 +499,36 @@ export default function ProductsGrid() {
                 </div>
               </div>
 
+              <div className="space-y-3">
+                {selectedSize && (
+                  <Button
+                    onClick={() => {
+                      handleAddToCart(selectedProduct, selectedSize.split('-')[0], selectedSize.split('-')[1])
+                      setSelectedProduct(null)
+                      setSelectedSize("")
+                    }}
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground py-5 sm:py-6 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </Button>
+                )}
               <Button
-                onClick={() => handleBuyNow(selectedProduct.name)}
+                  onClick={() => {
+                    if (selectedSize) {
+                      handleBuyNow(selectedProduct, selectedSize.split('-')[0], selectedSize.split('-')[1])
+                      setSelectedProduct(null)
+                      setSelectedSize("")
+                    } else {
+                      // Show message to select size first
+                      alert("Please select a size first")
+                    }
+                  }}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 sm:py-6 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Buy Now via Instagram
+                  Buy Now via WhatsApp
               </Button>
+              </div>
             </motion.div>
           )}
         </DialogContent>

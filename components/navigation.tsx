@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import { CartDrawer } from "@/components/cart-drawer"
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -88,21 +89,29 @@ export default function Navigation() {
                 </Link>
               </motion.div>
             ))}
+            <div className={isScrolled ? "text-primary" : "text-white"}>
+              <CartDrawer />
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`md:hidden ${
-              isScrolled 
-                ? "text-primary hover:text-accent hover:bg-primary/10" 
-                : "text-white hover:text-accent hover:bg-white/10"
-            }`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
+          {/* Mobile Menu & Cart */}
+          <div className="flex md:hidden items-center gap-2">
+            <div className={isScrolled ? "text-primary" : "text-white"}>
+              <CartDrawer />
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`${
+                isScrolled 
+                  ? "text-primary hover:text-accent hover:bg-primary/10" 
+                  : "text-white hover:text-accent hover:bg-white/10"
+              }`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
         </div>
 
         <AnimatePresence>
