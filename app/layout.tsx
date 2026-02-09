@@ -5,8 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Preloader } from "@/components/preloader"
 import { GoogleAnalytics } from "@/components/google-analytics"
 import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/structured-data"
-import { CartProvider } from "@/contexts/cart-context"
-import { Toaster } from "@/components/ui/toaster"
+import { Providers } from "@/components/providers"
 import { siteUrl } from "@/lib/constants"
 import "./globals.css"
 
@@ -112,15 +111,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${dmSans.variable} ${playfair.variable} font-sans antialiased`}>
-        <CartProvider>
+        <Providers>
           <OrganizationStructuredData />
           <WebsiteStructuredData />
           <Preloader />
           {children}
-          <Toaster />
           <GoogleAnalytics />
           <Analytics />
-        </CartProvider>
+        </Providers>
       </body>
     </html>
   )
